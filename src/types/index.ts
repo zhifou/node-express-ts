@@ -1,6 +1,7 @@
 export type Name = { name: string }
 export type Age = { age: number }
-export type Union = Name | Age
+export type Value = { value: string }
+export type Union = Name | Age | Value
 
 export type UnionKey<P> = P extends infer T ? keyof T : never
 

@@ -7,6 +7,9 @@ import express, {
 } from 'express'
 import silentHandle from '../utils/silentHandle'
 import studyController from '../controllers/study'
+import applyRoutesRedis from './redis'
+import applyUploadRedis from './upload'
+import log from '../utils/logger'
 
 // 路由配置接口
 interface RouterConf {
@@ -44,6 +47,9 @@ function routes(app: express.Application) {
             return studyController.lesson1(req, res, next)
         }
     )
+
+    applyRoutesRedis(app, log)
+    applyUploadRedis(app, log)
 
     routerConf.forEach((conf) => app.use(conf.path, conf.router))
 }
