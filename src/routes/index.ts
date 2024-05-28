@@ -7,8 +7,10 @@ import express, {
 } from 'express'
 import silentHandle from '../utils/silentHandle'
 import studyController from '../controllers/study'
+import mailerController from '../controllers/mailer'
 import applyRoutesRedis from './redis'
-import applyUploadRedis from './upload'
+import applyRoutesUpload from './upload'
+import applyRoutesLogin from './login'
 import log from '../utils/logger'
 
 // 路由配置接口
@@ -34,7 +36,7 @@ const getInfo = function () {
 function routes(app: express.Application) {
     // 根目录
     app.get('/', (req: Request, res: Response) => {
-        res.status(200).send('Hello Express TS')
+        res.status(200).send('Hello Express TS' + process.env.JWT_SECRET)
     })
     app.get('/getInfo', async (req: Request, res: Response) => {
         const [e, result] = await silentHandle(getInfo)
@@ -47,9 +49,16 @@ function routes(app: express.Application) {
             return studyController.lesson1(req, res, next)
         }
     )
+    app.get(
+        '/mailer',
+        async (req: Request, res: Response, next: NextFunction) => {
+            return mailerController.send(req, res, next)
+        }
+    )
 
     applyRoutesRedis(app, log)
-    applyUploadRedis(app, log)
+    applyRoutesUpload(app, log)
+    applyRoutesLogin(app, log)
 
     routerConf.forEach((conf) => app.use(conf.path, conf.router))
 }
